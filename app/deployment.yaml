@@ -18,6 +18,13 @@ spec:
           image: thitiphum12/hello-world:latest
           ports:
             - containerPort: 3000
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
 ---
 apiVersion: v1
 kind: Service
