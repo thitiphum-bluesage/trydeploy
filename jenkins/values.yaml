@@ -32,6 +32,22 @@ installPlugins:
   - configuration-as-code:1.51
   - kubernetes-credentials-provider:0.19
 
+agent:
+  volumes:
+    - type: EmptyDir
+      mountPath: /home/jenkins/agent
+      name: workspace-volume
+
+  containers:
+    - name: kubectl
+      image: bitnami/kubectl:latest
+      command:
+        - cat
+      tty: true
+      volumeMounts:
+        - name: workspace-volume
+          mountPath: /home/jenkins/agent
+
 JCasC:
   enabled: true
   configScripts:
