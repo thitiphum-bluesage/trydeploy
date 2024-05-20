@@ -1,26 +1,17 @@
 pipeline {
     agent any
+
     environment {
-        DOCKER_CREDENTIAL_ID = 'your-docker-credentials-id' // Docker credentials in Jenkins
-        DOCKER_REPO = 'your-docker-repo'
-        KUBECONFIG_CREDENTIAL_ID = 'your-kubeconfig-credentials-id' // Kubeconfig credentials in Jenkins
+        KUBECONFIG_CREDENTIALS = credentials('kubeconfig')
     }
+
     stages {
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    docker.withRegistry('', DOCKER_CREDENTIAL_ID) {
-                        def app = docker.build("${DOCKER_REPO}/hello-world:latest")
-                        app.push()
-                    }
-                }
-            }
-        }
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    withKubeConfig([credentialsId: KUBECONFIG_CREDENTIAL_ID]) {
-                        sh 'kubectl apply -f deployment.yaml'
+                    // ใช้ kubeconfig ในการ deploy
+                    withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+                        sh 'kubectl apply -f app/deployment.yaml --kubeconfig=$KUBECONFIG'
                     }
                 }
             }
